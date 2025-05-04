@@ -1,0 +1,9 @@
+
+
+# config.yaml
+file_path: pidsg25.xlsx
+n_samples: 5
+h: 5
+b: 50
+I_0: 0
+B_0: 0
