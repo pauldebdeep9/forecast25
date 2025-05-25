@@ -15,12 +15,12 @@ from plots import (plot_order_placement_bar,
 
 # scalar parameters
 h = 5
-b = 50
+b = 20
 I_0 = 0
 B_0 = 0
 
 # Load Excel file
-file_path = "pidsg25.xlsx"
+file_path = "pidsg25-02.xlsx"
 xls = pd.ExcelFile(file_path)
 
 # Load data sheets
@@ -42,8 +42,18 @@ lead_time_s2 = int(lead_time["s2"])
 
 # --- 3. Optional raw orders for s2 (order_time: quantity)
 raw_orders_s2 = {
-    1: 125,
-    2: 125
+    0: 4886.83127572017,
+    1: 4886.83127572017,
+    2: 4886.83127572017,
+    3: 4886.83127572017,
+    4: 4886.83127572017,
+    5: 4886.83127572017,
+    6: 2764.91769547325,
+    7: 2767.36111111111,
+    8: 2767.36111111111,
+    9: 2767.36111111111,
+    10: 2767.36111111111,
+    11: 2767.36111111111
 }
 
 enforce_fixed_orders = True  # Toggle
@@ -92,13 +102,13 @@ print(df_result)
 
 order_placed, order_arr = extract_order_matrices(df_result)
 
-plot_order_placement_bar(order_placed, start_date="2025-01-01")
-plot_price_distribution_band(price_df_s1, price_df_s2, start_date="2025-01-01")
-plot_price_and_orders(price_df_s1, order_placed, supplier='s1', start_date="2025-01-01")
-plot_price_and_orders(price_df_s2, order_placed, supplier='s2', start_date="2025-01-01")
+plot_order_placement_bar(order_placed, start_date="2025-04-01")
+plot_price_distribution_band(price_df_s1, price_df_s2, start_date="2025-04-01")
+plot_price_and_orders(price_df_s1, order_placed, supplier='s1', start_date="2025-04-01")
+plot_price_and_orders(price_df_s2, order_placed, supplier='s2', start_date="2025-04-01")
 
 mean_price_s2 = price_df_s2.iloc[:, 0].values
-plot_price_and_orders_deterministic(mean_price_s2, order_placed, supplier='s2', start_date="2025-01-01")
+plot_price_and_orders_deterministic(mean_price_s2, order_placed, supplier='s2', start_date="2025-04-01")
 
 print("Raw orders:", raw_orders_s2)
 print("Enforced fixed_orders_s2 (with arrival):", fixed_orders_s2)

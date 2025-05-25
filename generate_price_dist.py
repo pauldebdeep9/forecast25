@@ -3,7 +3,8 @@ import pandas as pd
 import numpy as np
 
 # Load the Excel file
-file_path = "price_pidsg.xlsx"  # update the path as needed
+# file_path = "price_pidsg.xlsx"  # update the path as needed
+file_path= 'pidsg25-02.xlsx'
 xls = pd.ExcelFile(file_path)
 
 # Read both sheets
