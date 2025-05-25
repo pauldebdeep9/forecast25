@@ -27,7 +27,7 @@ def generate_matrix(original_col):
 
     for t in range(T):
         mean_t = original_col[t]
-        var_t = 0.2 * mean_t
+        var_t = 0.3 * mean_t
         std_t = np.sqrt(var_t)
         generated[t, :] = np.random.normal(loc=mean_t, scale=std_t, size=100)
 
