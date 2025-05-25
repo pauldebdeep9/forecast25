@@ -165,4 +165,6 @@ def plot_price_and_orders_deterministic(price_series, order_placement, supplier,
     plt.show()
 
 
+# def plot_data_25()
+
 
