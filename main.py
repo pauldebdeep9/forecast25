@@ -1,7 +1,7 @@
 
 import pandas as pd
 import numpy as np
-
+import yaml
 from dataclass import ProcurementConfig, ModelData
 from model import solve_price_saa
 from postprocess_order import extract_order_matrices
@@ -9,32 +9,59 @@ from plots import (plot_order_placement_bar,
                    plot_price_distribution_band, 
                    plot_price_and_orders, 
                    plot_price_and_orders_deterministic)
+from price_distributions import PriceDistributionGenerator
 
 
-
-
-# scalar parameters
-h = 5
-b = 20
-I_0 = 0
-B_0 = 0
-
-# Load Excel file
+# # Load Excel file
 file_path = "pidsg25-02.xlsx"
 xls = pd.ExcelFile(file_path)
 
+# Define parameters for all supported distributions
+all_distribution_params = {
+    "lognormal": {"mean1": 3.8, "sigma1": 0.25, "mean2": 4.0, "sigma2": 0.3},
+    "gamma": {"shape1": 2.0, "scale1": 22.0, "shape2": 2.5, "scale2": 25.0},
+    "normal": {"mean1": 45, "std1": 5, "mean2": 50, "std2": 6},
+    "pareto": {"alpha1": 3.0, "scale1": 40.0, "alpha2": 2.5, "scale2": 45.0},
+    "triangular": {"left1": 40, "mode1": 45, "right1": 50, "left2": 42, "mode2": 48, "right2": 55},
+    "weibull": {"a1": 1.5, "scale1": 50.0, "a2": 1.2, "scale2": 55.0},
+    "beta": {"a1": 2.0, "b1": 5.0, "scale1": 100, "a2": 2.5, "b2": 4.5, "scale2": 110}
+}
+
+# --- Load config ---
+with open("config.yaml", "r") as f:
+    config = yaml.safe_load(f)
+
+dist_name = config["distribution_name"]
+
+# dist_params = config["distribution"]["params"]
+distribution_params = all_distribution_params[dist_name]
+
+T = config["problem"]["T"]
+N = config["problem"]["N"]
+seed = config["problem"]["seed"]
+h = config["problem"]["h"]
+b = config["problem"]["b"]
+I_0 = config["problem"]["I_0"]
+B_0 = config["problem"]["B_0"]
+enforce_fixed_orders = config["problem"]["enforce_fixed_orders"]
+
 # Load data sheets
 demand_df = pd.read_excel(xls, sheet_name="demand", index_col=0)
-price_df_s1 = pd.read_excel(xls, sheet_name="p1normal", index_col=0)
-price_df_s2 = pd.read_excel(xls, sheet_name="p2normal", index_col=0)
 supplier_df = pd.read_excel(xls, sheet_name="supplier")
 capacity_df = pd.read_excel(xls, sheet_name="capacity", index_col=0)
+
+
+
+# Generate synthetic price data
+generator = PriceDistributionGenerator(T=T, N= N, seed=42)
+price_df_s1, price_df_s2 = generator.generate_by_name(dist=dist_name, params=distribution_params)
+
 
 # --- 1. Fixed deterministic demand
 fixed_demand = demand_df["Actual"].dropna().values
 T = len(fixed_demand)
 S = supplier_df["supplier"].tolist()
-N = price_df_s1.shape[1]
+# N = price_df_s1.shape[1]
 
 # --- 2. Supplier lead times
 lead_time = dict(zip(supplier_df["supplier"], supplier_df["lead_time"]))
