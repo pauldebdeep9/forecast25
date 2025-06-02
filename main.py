@@ -131,3 +131,9 @@ plot_price_and_orders_deterministic(mean_price_s2, order_placed, supplier='s2', 
 print("Raw orders:", raw_orders_s2)
 print("Enforced fixed_orders_s2 (with arrival):", fixed_orders_s2)
 
+# --- 9. Save order_placed to CSV ---
+output_filename = f"order_placed_{dist_name}.csv"
+order_placed.to_csv(output_filename, index=True)
+print(f"Saved order_placed to {output_filename}")
+
+

@@ -1,7 +1,7 @@
 
 
 # Choose distribution to use
-distribution_name: normal
+distribution_name: beta
 
 # Define parameter sets for all supported distributions
 distributions:
