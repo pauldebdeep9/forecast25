@@ -9,7 +9,7 @@ class Cost:
 
     def compute_inventory_backlog_cost(self, h, b):
         """
-        Computes total inventory and backlog cost over time using scalar values.
+        Computes inventory and backlog cost per time period (returns vectors).
 
         - h: inventory holding cost per unit
         - b: backlog cost per unit
@@ -17,8 +17,9 @@ class Cost:
         T = self.order_placed.shape[0]
         inventory = self.initial_inventory
         backlog = 0.0
-        inv_cost = 0.0
-        backlog_cost = 0.0
+
+        inv_cost = np.zeros(T)
+        backlog_cost = np.zeros(T)
 
         for t in range(T):
             total_order = self.order_placed.iloc[t].sum()
@@ -28,7 +29,7 @@ class Cost:
             inventory = max(supply - self.demand[t], 0)
             backlog = max(self.demand[t] - supply, 0)
 
-            inv_cost += h * inventory
-            backlog_cost += b * backlog
+            inv_cost[t] = h * inventory
+            backlog_cost[t] = b * backlog
 
         return inv_cost, backlog_cost
