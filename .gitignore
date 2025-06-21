@@ -1,0 +1,60 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+*.env
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# VS Code settings
+.vscode/
+
+# macOS files
+.DS_Store
+
+# PyCharm
+.idea/
+
+# Test coverage
+htmlcov/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# Logs
+*.log
+
+# MyPy
+.mypy_cache/
+
+# PyInstaller
+dist/
+build/
+*.spec
+
+# Local config
+*.local
+*.dat
+*.db
+
+# Ignore model artifacts or datasets (optional)
+*.pkl
+*.h5
+*.onnx
+*.pt
+*.ckpt
+data/
+models/
+outputs/
