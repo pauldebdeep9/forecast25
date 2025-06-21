@@ -10,6 +10,7 @@ from plots import (plot_order_placement_bar,
                    plot_price_and_orders, 
                    plot_price_and_orders_deterministic)
 from price_distributions import PriceDistributionGenerator
+from cost import Cost
 
 
 # # Load Excel file
@@ -137,3 +138,6 @@ order_placed.to_csv(output_filename, index=True)
 print(f"Saved order_placed to {output_filename}")
 
 
+storage_cost, backlog_cost= Cost(df_result, order_placed, initial_inventory=I_0, demand=fixed_demand).compute_inventory_backlog_cost(h, b)
+print('Storage cost', storage_cost)
+print('Backlog cost', backlog_cost)

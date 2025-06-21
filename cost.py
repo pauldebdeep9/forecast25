@@ -1,30 +1,34 @@
+import numpy as np
 
+class Cost:
+    def __init__(self, df_result, order_placed, initial_inventory=0.0, demand=None):
+        self.df_result = df_result
+        self.order_placed = order_placed  # DataFrame of shape (T, S)
+        self.demand = np.array(demand)    # 1D array of shape (T,)
+        self.initial_inventory = initial_inventory  # scalar
 
-def compute_fixed_order_cost_from_Y(df_result, order_cost):
-    df_y = df_result[df_result['variable_name'].str.contains("if_make_order_arrive")].copy()
-    df_y[['t', 's', 't_prime']] = df_y['variable_name'] \
-        .str.extract(r"if_make_order_arrive\[(\d+),([a-zA-Z0-9_]+),(\d+)\]") \
-        .astype({0: int, 2: int, 1: str})
-    
-    return sum(order_cost[s] * val for _, (_, s, _, val) in df_y[['t', 's', 't_prime', 'value']].iterrows())
+    def compute_inventory_backlog_cost(self, h, b):
+        """
+        Computes total inventory and backlog cost over time using scalar values.
 
+        - h: inventory holding cost per unit
+        - b: backlog cost per unit
+        """
+        T = self.order_placed.shape[0]
+        inventory = self.initial_inventory
+        backlog = 0.0
+        inv_cost = 0.0
+        backlog_cost = 0.0
 
-def compute_procurement_cost_from_matrix(order_placed, price_sample):
-    """
-    Parameters:
-    - order_placed: pd.DataFrame [T x S]
-    - price_sample: dict {(t, s): price}
+        for t in range(T):
+            total_order = self.order_placed.iloc[t].sum()
+            supply = inventory + total_order - backlog
+            fulfilled = min(supply, self.demand[t])
 
-    Returns:
-    - total procurement cost
-    """
-    cost = 0
-    for (t, s), qty in order_placed.stack().items():
-        cost += price_sample[(t, s)] * qty
-    return cost
+            inventory = max(supply - self.demand[t], 0)
+            backlog = max(self.demand[t] - supply, 0)
 
+            inv_cost += h * inventory
+            backlog_cost += b * backlog
 
-def compute_inventory_backlog_cost_from_df(df_result, h, b):
-    df_i = df_result[df_result['variable_name'].str.contains("inventory")]
-    df_b = df_result[df_result['variable_name'].str.contains("backlog")]
-    return h * df_i['value'].sum(), b * df_b['value'].sum()
+        return inv_cost, backlog_cost
